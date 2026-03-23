@@ -1,0 +1,92 @@
+function cube_cycles(n)
+
+    create figure and drawing axis
+
+    # Step 1: define the cube in 2D projection
+    
+    define front-face corners:
+        FBL, FBR, FTR, FTL
+
+    define a shift vector
+
+    compute back-face corners by adding the shift:
+        BBL ← FBL + shift
+        BBR ← FBR + shift
+        BTR ← FTR + shift
+        BTL ← FTL + shift
+
+    store all 8 cube corners in pts
+
+
+    # Step 2: Draw the cube wireframe
+
+    draw_cube_frame(ax, pts)
+
+    # Step 3: Draw the front face cycles
+
+    front_edges, front_colors ← draw_face_cycles(
+        ax,
+        FBL, FBR, FTR, FTL,
+        n,
+        start_map = {
+            AB: starts red,
+            BC: starts red,
+            CD: starts red,
+            DA: starts red
+        }
+    )
+
+
+    # Step 4: Choose coloring for the top face
+
+    # The top face shares an edge with the front face.
+    # Use the color pattern on the shared front edge to determine how the top face should start.
+
+    tab_color ← opposite of the last color used on front edge CD
+
+
+    # Step 5: Draw the top face cycles
+
+    top_edges, top_colors ← draw_face_cycles(
+        ax,
+        FTL, FTR, BTR, BTL,
+        n,
+        start_map = {
+            AB: starts with tab_color,
+            BC: starts with tab_color,
+            CD: starts with tab_color,
+            DA: starts with tab_color
+        }
+    )
+
+
+    # Step 6: Choose coloring for the right face
+
+    # The right face shares an edge with the top face.
+    # Use the color pattern on the shared top edge to determine one of the right-face edge starts.
+
+    rab_color ← opposite of the last color used on top edge BC
+
+
+    # Step 7: Draw the right face cycles
+
+    draw_face_cycles(
+        ax,
+        FBR, BBR, BTR, FTR,
+        n,
+        start_map = {
+            AB: starts with tab_color,
+            BC: starts with tab_color,
+            CD: starts with rab_color,
+            DA: starts with tab_color
+        }
+    )
+
+
+    # Step 8: Format and display the drawing
+    set equal scaling on axes
+    hide axes
+    set x display range
+    set y display range
+    adjust layout
+    show figure
